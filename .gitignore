@@ -7,3 +7,4 @@ public
 routes
 npm-debug.log
 .directory
+src/server/ssl/*
