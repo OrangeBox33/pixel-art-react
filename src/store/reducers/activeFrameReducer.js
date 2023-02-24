@@ -7,7 +7,7 @@ console.log(isBrowser);
 let socket;
 if (isBrowser) {
   try {
-    socket = new WebSocket('wss://kvadratnikitosa.ru:444');
+    socket = new WebSocket('wss://kvadratnikitosa.ru');
   } catch (e) {
     console.log(e);
   }

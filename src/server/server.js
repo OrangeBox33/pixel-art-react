@@ -17,8 +17,7 @@ import {
   SET_RESET_GRID
 } from '../store/actions/actionTypes';
 const https = require('https');
-const http = require('http');
-const WebSocket = require('ws');
+const ws = require('ws');
 
 const firstGrid = [];
 for (let i = 0; i < 1024; i++) {
@@ -35,9 +34,9 @@ const main = {
   esp: null
 };
 
-const wsServer = new WebSocket.Server({ port: 444 });
+const wss = new ws.Server({ port: 444 });
 
-wsServer.on('connection', onConnect);
+// wsServer.on('connection', onConnect);
 
 function onConnect(ws) {
   console.log('подключился');
@@ -63,9 +62,12 @@ function onConnect(ws) {
 
   ws.on('close', function() {
     console.log('отключился');
-    const espClose = !main.clients.delete(ws);
-    main.esp = null;
-    main.isOnline = false;
+    const espIsClose = !main.clients.delete(ws);
+
+    if (espIsClose) {
+      main.esp = null;
+      main.isOnline = false;
+    }
   });
 }
 
@@ -102,12 +104,9 @@ if (ENV === 'development') {
 }
 
 app.use((req, res, next) => {
-  const host = req.get('Host');
-  if (host === configData.LEGACY_DOMAIN) {
-    return res.redirect(301, configData.ACTIVE_DOMAIN);
-  }
-  if (req.headers['x-forwarded-proto'] !== 'https' && ENV !== 'development') {
-    return res.redirect(301, configData.ACTIVE_DOMAIN);
+  if (req.headers.upgrade && req.headers.upgrade.toLowerCase() === 'websocket') {
+    wss.handleUpgrade(req, req.socket, Buffer.alloc(0), onConnect);
+    return;
   }
   return next();
 });
