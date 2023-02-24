@@ -17,25 +17,20 @@ const STORAGE_KEY = 'pixelart-react-v3-0-0';
  */
 
 function saveDataToStorage(storage, data) {
-  try {
-    storage.setItem(STORAGE_KEY, JSON.stringify(data));
-    return true;
-  } catch (e) {
-    return false; // There was an error
-  }
+  return true;
 }
 
 /*
   Storage initialization
 */
 export function initStorage(storage) {
-  storage.setItem(
-    STORAGE_KEY,
-    JSON.stringify({
-      stored: [], // Load an example project data by default
-      current: 0
-    })
-  );
+  // storage.setItem(
+  //   STORAGE_KEY,
+  //   JSON.stringify({
+  //     stored: [], // Load an example project data by default
+  //     current: 0
+  //   })
+  // );
 }
 
 /*
@@ -54,22 +49,7 @@ export function getDataFromStorage(storage) {
   Save a project into the stored data collection
 */
 export function saveProjectToStorage(storage, projectData) {
-  try {
-    let dataStored = getDataFromStorage(storage);
-    if (dataStored) {
-      dataStored.stored.push(projectData);
-      dataStored.current = dataStored.stored.length - 1;
-    } else {
-      dataStored = {
-        stored: [projectData],
-        current: 0
-      };
-    }
-    storage.setItem(STORAGE_KEY, JSON.stringify(dataStored));
-    return true;
-  } catch (e) {
-    return false; // There was an error
-  }
+  return true
 }
 
 /*
