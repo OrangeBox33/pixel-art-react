@@ -1,11 +1,23 @@
 import * as types from '../actions/actionTypes';
 // import WebSocket from 'ws';
 
-const socket = new WebSocket('ws://188.225.60.209:81');
+const isBrowser = typeof window !== 'undefined';
+console.log(isBrowser);
 
-socket.onopen = function(e) {
-  console.log(e);
-};
+let socket;
+if (isBrowser) {
+  try {
+    socket = new WebSocket('wss://kvadratnikitosa.ru:444');
+  } catch (e) {
+    console.log(e);
+  }
+  
+
+  socket.onopen = function(e) {
+    // console.log(e);
+  };
+}
+
 
 export const GRID_INITIAL_COLOR = 'rgba(0, 0, 0, 1)';
 
@@ -14,6 +26,7 @@ const updateFrameProp = prop => propReducer => (frames, action) => {
   // console.log(prop);
   // console.log(frames);
   // console.log(propReducer);
+  console.log('9', frames);
   const activeIndex = frames.get('activeIndex');
   return frames.updateIn(['list', activeIndex, prop], stateProp =>
     propReducer(stateProp, action)
@@ -100,21 +113,24 @@ const applyBucketToGrid = (grid, { id, paletteColor, columns, rows }) => {
     }
   }
 
-  const arrToSend = [];
+  if (isBrowser) {
+    const arrToSend = [];
 
-  for (let value of newGrid) {
-    if (value) {
-      const rgbArr = value
-        .slice(5)
-        .split(',')
-        .slice(0, -1)
-        .map(el => +el);
-      arrToSend.push(rgbArr);
-    } else {
-      arrToSend.push([0, 0, 0]);
+    for (let value of newGrid) {
+      if (value) {
+        const rgbArr = value
+          .slice(5)
+          .split(',')
+          .slice(0, -1)
+          .map(el => +el);
+        arrToSend.push(rgbArr);
+      } else {
+        arrToSend.push([0, 0, 0]);
+      }
     }
+    socket.send(JSON.stringify(arrToSend));
   }
-  socket.send(JSON.stringify(arrToSend));
+  
 
   return newGrid;
 };
