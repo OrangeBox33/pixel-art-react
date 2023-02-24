@@ -1,8 +1,19 @@
 import * as types from '../actions/actionTypes';
+// import WebSocket from 'ws';
 
-export const GRID_INITIAL_COLOR = 'rgba(49, 49, 49, 1)';
+const socket = new WebSocket('ws://188.225.60.209:81');
+
+socket.onopen = function(e) {
+  console.log(e);
+};
+
+export const GRID_INITIAL_COLOR = 'rgba(0, 0, 0, 1)';
 
 const updateFrameProp = prop => propReducer => (frames, action) => {
+  // console.log(action);
+  // console.log(prop);
+  // console.log(frames);
+  // console.log(propReducer);
   const activeIndex = frames.get('activeIndex');
   return frames.updateIn(['list', activeIndex, prop], stateProp =>
     propReducer(stateProp, action)
@@ -62,8 +73,11 @@ const applyBucketToGrid = (grid, { id, paletteColor, columns, rows }) => {
   let auxAdjacentId;
   let auxAdjacentColor;
 
+  const arr = [];
+
   while (queue.length > 0) {
     currentId = queue.shift();
+    arr.push({ id: currentId, color: paletteColor });
     newGrid = drawPixel(newGrid, paletteColor, currentId);
     adjacents = getSameColorAdjacentCells(
       newGrid,
@@ -85,6 +99,22 @@ const applyBucketToGrid = (grid, { id, paletteColor, columns, rows }) => {
       }
     }
   }
+
+  const arrToSend = [];
+
+  for (let value of newGrid) {
+    if (value) {
+      const rgbArr = value
+        .slice(5)
+        .split(',')
+        .slice(0, -1)
+        .map(el => +el);
+      arrToSend.push(rgbArr);
+    } else {
+      arrToSend.push([0, 0, 0]);
+    }
+  }
+  socket.send(JSON.stringify(arrToSend));
 
   return newGrid;
 };

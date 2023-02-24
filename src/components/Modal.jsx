@@ -219,7 +219,7 @@ class Modal extends React.Component {
             x
           </button>
         </div>
-        {radioOptions}
+        {/* {radioOptions} */}
         <div className="modal__body" ref={this.modalBodyRef}>
           {content}
         </div>

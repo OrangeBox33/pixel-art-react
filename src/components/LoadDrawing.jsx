@@ -213,7 +213,6 @@ export default class LoadDrawing extends React.Component {
         const drawingsStored = drawings.length > 0;
         return (
           <div className="load-drawing">
-            <h2>Select one of your projects stored in the browser</h2>
             <div
               className={`load-drawing__container
                 ${!drawingsStored ? 'empty' : ''}`}

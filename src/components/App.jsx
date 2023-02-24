@@ -24,6 +24,7 @@ import CellsInfo from './CellsInfo';
 import UndoRedoContainer from './UndoRedo';
 import initialSetup from '../utils/startup';
 import drawHandlersProvider from '../utils/drawHandlersProvider';
+import Button from './common/Button';
 
 export default class App extends React.Component {
   constructor() {
@@ -74,19 +75,7 @@ export default class App extends React.Component {
           fadeOutTime={1500}
           duration={1500}
         />
-        <div
-          className="app__frames-container"
-          data-tooltip={
-            helpOn
-              ? `Create an awesome animation sequence.
-              You can modify the duration of each frame, changing its own value.
-              The number indicates where the frame ends in a range from 0 to 100.
-              `
-              : null
-          }
-        >
-          <FramesHandlerContainer />
-        </div>
+
         <div className="app__central-container">
           <div className="left col-1-4">
             <div className="app__left-side">
@@ -112,6 +101,13 @@ export default class App extends React.Component {
                       <SaveDrawingContainer />
                     </div>
                   </div>
+                  <Button
+                    type="file"
+                    onChange={() => {}}
+                    ariaLabel="Load image file"
+                  >
+                    LOAD PHOTO
+                  </Button>
                   <div
                     data-tooltip={helpOn ? 'Undo (CTRL+Z) Redo (CTRL+Y)' : null}
                   >
@@ -161,64 +157,6 @@ export default class App extends React.Component {
                   <PaletteGridContainer />
                 </div>
               </div>
-              <div className="app__mobile--container max-width-container">
-                <div className="app__mobile--group">
-                  <button
-                    type="button"
-                    className="app__copycss-button"
-                    onClick={() => {
-                      this.changeModalType('copycss');
-                    }}
-                    data-tooltip={
-                      helpOn ? 'Check your CSS generated code' : null
-                    }
-                  >
-                    css
-                  </button>
-                </div>
-                <div className="app__mobile--group">
-                  <div className="app__social-container">
-                    <div
-                      data-tooltip={
-                        helpOn
-                          ? 'Download your creation in different formats'
-                          : null
-                      }
-                    >
-                      <button
-                        type="button"
-                        aria-label="Download"
-                        className="app__download-button"
-                        onClick={() => {
-                          this.changeModalType('download');
-                        }}
-                      />
-                    </div>
-                    <div className="app__help-container">
-                      <div data-tooltip="Toggle help tooltips">
-                        <button
-                          type="button"
-                          aria-label="Help"
-                          className={`app__toggle-help-button
-                          ${helpOn ? ' selected' : ''}`}
-                          onClick={() => {
-                            this.toggleHelp();
-                          }}
-                        />
-                      </div>
-                      <div
-                        data-tooltip={helpOn ? 'Show keyboard shortcuts' : null}
-                      >
-                        <KeyBindings
-                          onClick={() => {
-                            this.changeModalType('keybindings');
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
           <div className="center col-2-4">
@@ -226,81 +164,7 @@ export default class App extends React.Component {
               drawHandlersFactory={this.drawHandlersFactory}
             />
           </div>
-          <div className="right col-1-4">
-            <div className="app__right-side">
-              <div className="app__mobile--container">
-                <div className="app__mobile--group">
-                  <PreviewBox
-                    helpOn={helpOn}
-                    callback={() => {
-                      this.changeModalType('preview');
-                    }}
-                  />
-                  <div
-                    data-tooltip={helpOn ? 'Reset the selected frame' : null}
-                    className="max-width-container-centered {"
-                  >
-                    <ResetContainer />
-                  </div>
-                  <div
-                    data-tooltip={helpOn ? 'Number of columns and rows' : null}
-                    className="max-width-container-centered {"
-                  >
-                    <DimensionsContainer />
-                  </div>
-                </div>
-                <div className="app__mobile--group max-width-container-centered {">
-                  <div data-tooltip={helpOn ? 'Size of one tile in px' : null}>
-                    <CellSizeContainer />
-                  </div>
-                  <div
-                    data-tooltip={
-                      helpOn ? 'Animation duration in seconds' : null
-                    }
-                  >
-                    <DurationContainer />
-                    <CellsInfo />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-        <div className="css-container">
-          <CssDisplayContainer />
-        </div>
-        <CookieConsent
-          location="bottom"
-          buttonText="Got it!"
-          cookieName="pixelartcssCookiesAccepted"
-          style={{
-            background: '#313131',
-            fontSize: '13px',
-            textAlign: 'center'
-          }}
-          buttonStyle={{
-            background: '#bbbbbb',
-            color: '#4e503b',
-            fontSize: '13px'
-          }}
-          contentStyle={{
-            flex: '1 0 200px',
-            margin: '15px'
-          }}
-          expires={150}
-        >
-          By continuing to use this website you are giving consent to cookies
-          being used. Thank you.
-          <a
-            href="/cookies"
-            target="_blank"
-            rel="noopener noreferrer nofollow"
-            style={{ textDecoration: 'none', color: '#5786c1' }}
-          >
-            {' '}
-            Learn more
-          </a>
-        </CookieConsent>
         <ModalContainer
           type={modalType}
           isOpen={modalOpen}

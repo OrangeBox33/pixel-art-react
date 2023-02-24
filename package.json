@@ -83,7 +83,8 @@
     "tinykeys": "^1.1.0",
     "twitter": "^1.7.1",
     "url-loader": "^2.0.1",
-    "whatwg-fetch": "^2.0.4"
+    "whatwg-fetch": "^2.0.4",
+    "ws": "^8.12.1"
   },
   "engines": {
     "node": ">=16.0.0",
