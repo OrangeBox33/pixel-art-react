@@ -2,9 +2,7 @@ import { renderToString } from 'react-dom/server';
 import undoable, { includeAction } from 'redux-undo';
 import express from 'express';
 import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
 import fs from 'fs';
-import session from 'express-session';
 import React from 'react';
 import { createStore } from 'redux';
 import reducer from '../store/reducers/reducer';
@@ -18,6 +16,74 @@ import {
   SET_CELL_SIZE,
   SET_RESET_GRID
 } from '../store/actions/actionTypes';
+const https = require('https');
+const http = require('http');
+const WebSocket = require('ws');
+
+const firstGrid = [];
+for (let i = 0; i < 1024; i++) {
+  firstGrid.push([0, 0, 0]);
+}
+
+const main = {
+  serverGrid: firstGrid,
+  espGrid: firstGrid,
+  saved: [],
+  isOnline: false,
+  qtyOnline: 0,
+  clients: new Set(),
+  esp: null
+};
+
+const wsServer = new WebSocket.Server({ port: 444 });
+
+wsServer.on('connection', onConnect);
+
+function onConnect(ws) {
+  console.log('подключился');
+  main.clients.add(ws);
+
+  ws.on('message', function(message) {
+    console.log(message.toString().slice(0, 50));
+    if (message.length > 1000) {
+      main.state = [...JSON.parse(message)];
+    }
+    if (message.toString() === 'kvadratNikitosa') {
+      console.log('client has', main.clients.has(ws));
+      if (main.clients.has(ws)) {
+        esp = ws;
+        main.clients.delete(ws);
+        main.isOnline = true;
+      }
+    }
+    // for(let client of clients) {
+    //   client.send(message);
+    // }
+  });
+
+  ws.on('close', function() {
+    console.log('отключился');
+    const espClose = !main.clients.delete(ws);
+    main.esp = null;
+    main.isOnline = false;
+  });
+}
+
+const updateEspGrid = () => {
+  // main
+};
+
+const checkGridDifference = () => {
+  for (let i = 0; i < 1024; i++) {
+    const rgbCurrentCell = main.serverGrid[i];
+    rgbCurrentCell.forEach((value, j) => {
+      console.log(i, value, main.espGrid[i][j]);
+      if (value !== main.espGrid[i][j]) {
+        updateEspGrid();
+      }
+    });
+  }
+};
 
 const app = express();
 module.exports = app;
@@ -27,7 +93,6 @@ console.log(`Version deployed: ${pkgjson.version}`);
  * Configuration
  */
 let configData;
-const PORTSERVER = 3000;
 const ENV = process.env.NODE_ENV || 'development';
 
 if (ENV === 'development') {
@@ -52,14 +117,6 @@ app.set('view engine', 'pug');
 app.use(express.static(`${__dirname}/../../deploy`));
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
-app.use(cookieParser());
-app.use(
-  session({
-    secret: configData.EXPRESS_SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true
-  })
-);
 
 /**
  * Redux helper functions
@@ -92,14 +149,8 @@ function renderHome(req, res) {
   // Send the rendered page back to the client
   res.render('index.pug', {
     reactOutput: html,
-    initialState: JSON.stringify(initialState),
-    googleAnalyticsId: configData.GOOGLE_ANALYTICS_ID
-  });
-}
-
-function renderCookies(req, res) {
-  res.render('cookies.pug', {
-    googleAnalyticsId: configData.GOOGLE_ANALYTICS_ID
+    initialState: JSON.stringify(initialState)
+    // googleAnalyticsId: configData.GOOGLE_ANALYTICS_ID
   });
 }
 
@@ -107,17 +158,13 @@ function renderCookies(req, res) {
  * Routes
  */
 app.get('/', renderHome);
-app.get('/cookies', renderCookies);
-app.use(function(req, res) {
-  res.status(404).render('404.pug', {
-    googleAnalyticsId: configData.GOOGLE_ANALYTICS_ID
-  });
-});
 
-app.listen(process.env.PORT || PORTSERVER, () => {
-  console.log(
-    'Express server listening on port %d in %s mode',
-    process.env.PORT || PORTSERVER,
-    app.settings.env
-  );
-});
+var options = {
+  key: fs.readFileSync(`${__dirname}/ssl/privateKey.key`), // PRIVATE KEY
+  cert: fs.readFileSync(`${__dirname}/ssl/cerfKey.pem`) // CERTIFICATE
+};
+var serverHttps = https.createServer(options, app);
+// var serverHttp = http.createServer(app);
+
+serverHttps.listen(443);
+// serverHttp.listen(80);
