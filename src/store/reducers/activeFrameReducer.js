@@ -2,7 +2,6 @@ import * as types from '../actions/actionTypes';
 // import WebSocket from 'ws';
 
 const isBrowser = typeof window !== 'undefined';
-console.log(isBrowser);
 
 let socket;
 if (isBrowser) {
@@ -11,22 +10,11 @@ if (isBrowser) {
   } catch (e) {
     console.log(e);
   }
-  
-
-  socket.onopen = function(e) {
-    // console.log(e);
-  };
 }
-
 
 export const GRID_INITIAL_COLOR = 'rgba(0, 0, 0, 1)';
 
 const updateFrameProp = prop => propReducer => (frames, action) => {
-  // console.log(action);
-  // console.log(prop);
-  // console.log(frames);
-  // console.log(propReducer);
-  console.log('9', frames);
   const activeIndex = frames.get('activeIndex');
   return frames.updateIn(['list', activeIndex, prop], stateProp =>
     propReducer(stateProp, action)
@@ -77,6 +65,27 @@ const getSameColorAdjacentCells = (frameGrid, columns, rows, id, color) => {
 
 const drawPixel = (pixelGrid, color, id) => pixelGrid.set(id, color);
 
+const sendGridToServer = newGrid => {
+  if (isBrowser && socket) {
+    const arrToSend = [];
+
+    for (let value of newGrid) {
+      if (value) {
+        const rgbArr = value
+          .slice(5)
+          .split(',')
+          .slice(0, -1)
+          .map(el => Math.round(+el / 4));
+        arrToSend.push(rgbArr);
+      } else {
+        arrToSend.push([0, 0, 0]);
+      }
+    }
+
+    socket.send(JSON.stringify(arrToSend));
+  }
+};
+
 const applyBucketToGrid = (grid, { id, paletteColor, columns, rows }) => {
   const queue = [id];
   const cellColor = grid.get(id);
@@ -113,30 +122,16 @@ const applyBucketToGrid = (grid, { id, paletteColor, columns, rows }) => {
     }
   }
 
-  if (isBrowser) {
-    const arrToSend = [];
-
-    for (let value of newGrid) {
-      if (value) {
-        const rgbArr = value
-          .slice(5)
-          .split(',')
-          .slice(0, -1)
-          .map(el => +el);
-        arrToSend.push(rgbArr);
-      } else {
-        arrToSend.push([0, 0, 0]);
-      }
-    }
-    socket.send(JSON.stringify(arrToSend));
-  }
-  
+  sendGridToServer(newGrid);
 
   return newGrid;
 };
 
-const applyPencilToGrid = (pixelGrid, { paletteColor, id }) =>
-  drawPixel(pixelGrid, paletteColor, id);
+const applyPencilToGrid = (pixelGrid, { paletteColor, id }) => {
+  const newGrid = drawPixel(pixelGrid, paletteColor, id);
+  sendGridToServer(newGrid);
+  return newGrid;
+};
 
 const applyBucket = updateGrid(applyBucketToGrid);
 
@@ -239,11 +234,17 @@ const applyMove = (frames, action) => {
 
 const applyPencil = updateGrid(applyPencilToGrid);
 
-const applyEraser = updateGrid((pixelGrid, { id }) =>
-  drawPixel(pixelGrid, '', id)
-);
+const applyEraser = updateGrid((pixelGrid, { id }) => {
+  const newGrid = drawPixel(pixelGrid, '', id);
+  sendGridToServer(newGrid);
+  return newGrid;
+});
 
-const resetGrid = updateGrid(pixelGrid => pixelGrid.map(() => ''));
+const resetGrid = updateGrid(pixelGrid => {
+  const newGrid = pixelGrid.map(() => '');
+  sendGridToServer(newGrid);
+  return newGrid;
+});
 
 const changeFrameInterval = updateInterval(
   (previousInterval, { interval }) => interval

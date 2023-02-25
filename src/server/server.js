@@ -16,6 +16,7 @@ import {
   SET_CELL_SIZE,
   SET_RESET_GRID
 } from '../store/actions/actionTypes';
+import { transform } from '../utils/transform';
 const https = require('https');
 const ws = require('ws');
 
@@ -35,29 +36,79 @@ const main = {
 };
 
 const wss = new ws.Server({ port: 444 });
+const wsEsp = new ws.Server({ port: 81 });
+
+wsEsp.on('connection', onConnectEsp);
 
 // wsServer.on('connection', onConnect);
+
+const updateEspGrid = () => {
+  let strToSend = '';
+
+  const transformedEspGrid = transform(main.espGrid);
+
+  for (let palette of transformedEspGrid) {
+    const paletteStr = palette.reduce((acc, color) => `${acc},${color}`, '');
+    strToSend += `${paletteStr}a`;
+  }
+
+  strToSend = strToSend.slice(0, -1);
+
+  if (main.esp) {
+    // console.log(strToSend.slice(20));
+    main.esp.send(strToSend);
+  }
+};
+
+const checkGridDifference = () => {
+  // console.log('checkGridDifference');
+  let needUpdate = false;
+
+  for (let i = 0; i < 1024; i++) {
+    const rgbCurrentCell = main.serverGrid[i];
+
+    rgbCurrentCell.forEach((value, j) => {
+      if (value !== main.espGrid[i][j]) {
+        needUpdate = true;
+        main.espGrid[i][j] = value;
+      }
+    });
+  }
+
+  if (needUpdate) {
+    updateEspGrid();
+  }
+};
+
+setInterval(checkGridDifference, 250);
+
+function onConnectEsp(ws) {
+  console.log('подключился esp');
+  main.esp = ws;
+  main.isOnline = true;
+
+  ws.on('message', function(message) {
+    console.log(message.toString().slice(0, 50));
+  });
+
+  ws.on('close', function() {
+    console.log('отключился esp');
+    main.esp = null;
+    main.isOnline = false;
+  });
+
+  // ws.send('10,20,30a40,50,60a70,80,90');
+}
 
 function onConnect(ws) {
   console.log('подключился');
   main.clients.add(ws);
 
   ws.on('message', function(message) {
-    console.log(message.toString().slice(0, 50));
+    // console.log(message.toString().slice(0, 50));
     if (message.length > 1000) {
-      main.state = [...JSON.parse(message)];
+      main.serverGrid = [...JSON.parse(message)];
     }
-    if (message.toString() === 'kvadratNikitosa') {
-      console.log('client has', main.clients.has(ws));
-      if (main.clients.has(ws)) {
-        esp = ws;
-        main.clients.delete(ws);
-        main.isOnline = true;
-      }
-    }
-    // for(let client of clients) {
-    //   client.send(message);
-    // }
   });
 
   ws.on('close', function() {
@@ -70,22 +121,6 @@ function onConnect(ws) {
     }
   });
 }
-
-const updateEspGrid = () => {
-  // main
-};
-
-const checkGridDifference = () => {
-  for (let i = 0; i < 1024; i++) {
-    const rgbCurrentCell = main.serverGrid[i];
-    rgbCurrentCell.forEach((value, j) => {
-      console.log(i, value, main.espGrid[i][j]);
-      if (value !== main.espGrid[i][j]) {
-        updateEspGrid();
-      }
-    });
-  }
-};
 
 const app = express();
 module.exports = app;
@@ -104,7 +139,10 @@ if (ENV === 'development') {
 }
 
 app.use((req, res, next) => {
-  if (req.headers.upgrade && req.headers.upgrade.toLowerCase() === 'websocket') {
+  if (
+    req.headers.upgrade &&
+    req.headers.upgrade.toLowerCase() === 'websocket'
+  ) {
     wss.handleUpgrade(req, req.socket, Buffer.alloc(0), onConnect);
     return;
   }
