@@ -124,7 +124,7 @@ function onConnect(ws) {
     }
   });
 
-  // ws.send('try send');
+  ws.send(JSON.stringify(main.serverGrid));
 }
 
 const app = express();
