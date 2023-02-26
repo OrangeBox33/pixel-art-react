@@ -229,6 +229,8 @@ const applyMove = (frames, action) => {
       break;
     default:
   }
+
+  sendGridToServer(frameShifted);
   return frames.setIn(['list', activeIndex, 'grid'], frameShifted);
 };
 
