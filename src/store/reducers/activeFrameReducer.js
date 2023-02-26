@@ -235,13 +235,13 @@ const applyMove = (frames, action) => {
 const applyPencil = updateGrid(applyPencilToGrid);
 
 const applyEraser = updateGrid((pixelGrid, { id }) => {
-  const newGrid = drawPixel(pixelGrid, '', id);
+  const newGrid = drawPixel(pixelGrid, 'rgba(0,0,0,1)', id);
   sendGridToServer(newGrid);
   return newGrid;
 });
 
 const resetGrid = updateGrid(pixelGrid => {
-  const newGrid = pixelGrid.map(() => '');
+  const newGrid = pixelGrid.map(() => 'rgba(0,0,0,1)');
   sendGridToServer(newGrid);
   return newGrid;
 });
@@ -249,10 +249,6 @@ const resetGrid = updateGrid(pixelGrid => {
 const changeFrameInterval = updateInterval(
   (previousInterval, { interval }) => interval
 );
-
-export const myUpdateGrid = () => {
-  updateGrid();
-};
 
 export default function(frames, action) {
   switch (action.type) {

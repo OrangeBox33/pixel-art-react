@@ -10,7 +10,7 @@ for (let i = 0; i < 1024; i++) {
 
 export const MyPixelCanvasContainer = ({ drawHandlersFactory }) => {
   if (!socket) return null;
-// 'rgba(49, 49, 49, 1)'
+  // 'rgba(49, 49, 49, 1)'
   const [grid, setGrid] = useState(initialGrid);
 
   socket.onmessage = function(event) {
@@ -18,5 +18,10 @@ export const MyPixelCanvasContainer = ({ drawHandlersFactory }) => {
     setGrid(fullArr);
   };
 
-  return <PixelCanvasContainer drawHandlersFactory={drawHandlersFactory} myGrid={grid} />;
+  return (
+    <PixelCanvasContainer
+      drawHandlersFactory={drawHandlersFactory}
+      myGrid={grid}
+    />
+  );
 };

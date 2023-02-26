@@ -1,6 +1,6 @@
-const formula = (x, y) => 32 * y + x;
-
 export const transform = oldArr => {
+  const formula = (x, y) => 32 * y + x;
+
   const arr = [];
   let x = 31;
   let y = 7;
@@ -96,6 +96,16 @@ export const transform = oldArr => {
         y--;
       }
     }
+  }
+
+  return arr;
+};
+
+export const createEmptyGrid = () => {
+  const arr = [];
+
+  for (let i = 0; i < 1024; i++) {
+    arr[i] = [0, 0, 0];
   }
 
   return arr;

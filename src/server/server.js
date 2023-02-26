@@ -16,7 +16,7 @@ import {
   SET_CELL_SIZE,
   SET_RESET_GRID
 } from '../store/actions/actionTypes';
-import { transform } from '../utils/transform';
+import { transform } from '../utils/myUtils';
 const https = require('https');
 const ws = require('ws');
 
@@ -48,7 +48,10 @@ const updateEspGrid = () => {
   const transformedEspGrid = transform(main.espGrid);
 
   for (let palette of transformedEspGrid) {
-    const paletteStr = palette.reduce((acc, color) => `${acc},${Math.round(color / 4)}`, '');
+    const paletteStr = palette.reduce(
+      (acc, color) => `${acc},${Math.round(color / 4)}`,
+      ''
+    );
     strToSend += `${paletteStr}a`;
   }
 
