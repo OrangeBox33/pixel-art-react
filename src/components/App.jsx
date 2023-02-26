@@ -25,6 +25,7 @@ import UndoRedoContainer from './UndoRedo';
 import initialSetup from '../utils/startup';
 import drawHandlersProvider from '../utils/drawHandlersProvider';
 import Button from './common/Button';
+import { MyPixelCanvasContainer } from './MyPixelCanvasContainer';
 
 export default class App extends React.Component {
   constructor() {
@@ -163,6 +164,7 @@ export default class App extends React.Component {
             <PixelCanvasContainer
               drawHandlersFactory={this.drawHandlersFactory}
             />
+            <MyPixelCanvasContainer />
           </div>
         </div>
         <ModalContainer

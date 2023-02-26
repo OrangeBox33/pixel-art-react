@@ -96,8 +96,6 @@ function onConnectEsp(ws) {
     main.esp = null;
     main.isOnline = false;
   });
-
-  // ws.send('10,20,30a40,50,60a70,80,90');
 }
 
 function onConnect(ws) {
@@ -105,7 +103,6 @@ function onConnect(ws) {
   main.clients.add(ws);
 
   ws.on('message', function(message) {
-    // console.log(message.toString().slice(0, 50));
     if (message.length > 1000) {
       main.serverGrid = [...JSON.parse(message)];
     }
@@ -120,6 +117,8 @@ function onConnect(ws) {
       main.isOnline = false;
     }
   });
+
+  ws.send('try send');
 }
 
 const app = express();

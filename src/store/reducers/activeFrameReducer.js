@@ -3,7 +3,7 @@ import * as types from '../actions/actionTypes';
 
 const isBrowser = typeof window !== 'undefined';
 
-let socket;
+export let socket;
 if (isBrowser) {
   try {
     socket = new WebSocket('wss://kvadratnikitosa.ru');
@@ -249,6 +249,10 @@ const resetGrid = updateGrid(pixelGrid => {
 const changeFrameInterval = updateInterval(
   (previousInterval, { interval }) => interval
 );
+
+export const myUpdateGrid = () => {
+  updateGrid();
+};
 
 export default function(frames, action) {
   switch (action.type) {
