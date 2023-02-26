@@ -1,27 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 import { socket } from '../store/reducers/activeFrameReducer';
 import PixelCanvasContainer from './PixelCanvas';
-
-const initialGrid = [];
-
-for (let i = 0; i < 1024; i++) {
-  initialGrid[i] = [0, 0, 0];
-}
+import { setDrawing } from '../store/actions/actionCreators';
+import { createFrames, palette } from '../utils/myUtils';
 
 export const MyPixelCanvasContainer = ({ drawHandlersFactory }) => {
+  const dispatch = useDispatch();
+
   if (!socket) return null;
-  // 'rgba(49, 49, 49, 1)'
-  const [grid, setGrid] = useState(initialGrid);
 
   socket.onmessage = function(event) {
-    const fullArr = JSON.parse(event.data);
-    setGrid(fullArr);
+    const frames = createFrames(JSON.parse(event.data));
+    dispatch(setDrawing(frames, palette, 10, 32, 32));
   };
 
-  return (
-    <PixelCanvasContainer
-      drawHandlersFactory={drawHandlersFactory}
-      myGrid={grid}
-    />
-  );
+  return <PixelCanvasContainer drawHandlersFactory={drawHandlersFactory} />;
 };

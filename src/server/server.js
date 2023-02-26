@@ -16,18 +16,13 @@ import {
   SET_CELL_SIZE,
   SET_RESET_GRID
 } from '../store/actions/actionTypes';
-import { transform } from '../utils/myUtils';
+import { transform, createEmptyGrid } from '../utils/myUtils';
 const https = require('https');
 const ws = require('ws');
 
-const firstGrid = [];
-for (let i = 0; i < 1024; i++) {
-  firstGrid.push([0, 0, 0]);
-}
-
 const main = {
-  serverGrid: firstGrid,
-  espGrid: firstGrid,
+  serverGrid: createEmptyGrid(),
+  espGrid: createEmptyGrid(),
   saved: [],
   isOnline: false,
   qtyOnline: 0,
@@ -49,10 +44,11 @@ const updateEspGrid = () => {
 
   for (let palette of transformedEspGrid) {
     const paletteStr = palette.reduce(
-      (acc, color) => `${acc},${Math.round(color / 4)}`,
+      (acc, color) => `${acc}${Math.round(color / 4)},`,
       ''
     );
-    strToSend += `${paletteStr}a`;
+
+    strToSend += `${paletteStr.slice(0, -1)}a`;
   }
 
   strToSend = strToSend.slice(0, -1);
@@ -63,7 +59,6 @@ const updateEspGrid = () => {
 };
 
 const checkGridDifference = () => {
-  // console.log('checkGridDifference');
   let needUpdate = false;
 
   for (let i = 0; i < 1024; i++) {
@@ -89,9 +84,7 @@ function onConnectEsp(ws) {
   main.esp = ws;
   main.isOnline = true;
 
-  ws.on('message', function(message) {
-    console.log(message.toString().slice(0, 50));
-  });
+  ws.on('message', function(message) {});
 
   ws.on('close', function() {
     console.log('отключился esp');

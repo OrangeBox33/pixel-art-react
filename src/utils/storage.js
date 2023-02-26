@@ -39,6 +39,7 @@ export function initStorage(storage) {
 export function getDataFromStorage(storage) {
   try {
     const data = storage.getItem(STORAGE_KEY);
+    console;
     return data ? JSON.parse(data) : false;
   } catch (e) {
     return false; // There was an error
@@ -49,7 +50,7 @@ export function getDataFromStorage(storage) {
   Save a project into the stored data collection
 */
 export function saveProjectToStorage(storage, projectData) {
-  return true
+  return true;
 }
 
 /*

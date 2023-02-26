@@ -81,7 +81,6 @@ const sendGridToServer = newGrid => {
         arrToSend.push([0, 0, 0]);
       }
     }
-
     socket.send(JSON.stringify(arrToSend));
   }
 };
@@ -193,7 +192,7 @@ const shiftPixelsRight = (grid, columnCount) => {
   return tempGrid;
 };
 
-const applyMove = (frames, action) => {
+export const applyMove = (frames, action) => {
   const { xDiff, yDiff, cellWidth } = action.moveDiff;
   const x = xDiff / cellWidth;
   const y = yDiff / cellWidth;

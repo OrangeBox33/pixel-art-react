@@ -34,10 +34,10 @@ class PixelCanvas extends React.Component {
 
   render() {
     const { props } = this;
-    const cells = props.myGrid.map((rgbArr, i) => ({
+    const cells = props.grid.map((color, i) => ({
       id: i,
       width: 100 / props.columns,
-      color: rgbArr.reduce((acc, oneColor) => `${acc},${oneColor}`, 'rgba(') + ',1)'
+      color: color
     }));
     let gridExtraClass = 'cell';
     if (props.eraserOn) {
