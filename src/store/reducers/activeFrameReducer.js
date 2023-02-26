@@ -75,7 +75,7 @@ const sendGridToServer = newGrid => {
           .slice(5)
           .split(',')
           .slice(0, -1)
-          .map(el => Math.round(+el / 4));
+          .map(el => +el);
         arrToSend.push(rgbArr);
       } else {
         arrToSend.push([0, 0, 0]);

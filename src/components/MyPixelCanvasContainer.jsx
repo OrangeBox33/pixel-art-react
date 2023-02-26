@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { socket } from '../store/reducers/activeFrameReducer';
+import PixelCanvasContainer from './PixelCanvas';
+
+const initialGrid = [];
+
+for (let i = 0; i < 1024; i++) {
+  initialGrid[i] = [0, 0, 0];
+}
 
 export const MyPixelCanvasContainer = ({ drawHandlersFactory }) => {
   if (!socket) return null;
+// 'rgba(49, 49, 49, 1)'
+  const [grid, setGrid] = useState(initialGrid);
 
-  const [grid, setGrid] = useState([]);
   socket.onmessage = function(event) {
-    // console.log(event.data.toString());
-    setGrid(JSON.parse(event.data));
+    const fullArr = JSON.parse(event.data);
+    setGrid(fullArr);
   };
 
-  useEffect(() => console.log(grid));
-
-  return <h1>123</h1>;
-
-  // return <PixelCanvasContainer drawHandlersFactory={drawHandlersFactory} />;
+  return <PixelCanvasContainer drawHandlersFactory={drawHandlersFactory} myGrid={grid} />;
 };

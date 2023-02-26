@@ -48,14 +48,13 @@ const updateEspGrid = () => {
   const transformedEspGrid = transform(main.espGrid);
 
   for (let palette of transformedEspGrid) {
-    const paletteStr = palette.reduce((acc, color) => `${acc},${color}`, '');
+    const paletteStr = palette.reduce((acc, color) => `${acc},${Math.round(color / 4)}`, '');
     strToSend += `${paletteStr}a`;
   }
 
   strToSend = strToSend.slice(0, -1);
 
   if (main.esp) {
-    // console.log(strToSend.slice(20));
     main.esp.send(strToSend);
   }
 };

@@ -1,26 +1,15 @@
 import React from 'react';
-import CookieConsent from 'react-cookie-consent';
-import PreviewBox from './PreviewBox';
-import PixelCanvasContainer from './PixelCanvas';
-import CellSizeContainer from './CellSize';
 import ColorPickerContainer from './ColorPicker';
 import ModalContainer from './Modal';
-import DimensionsContainer from './Dimensions';
-import KeyBindings from './KeyBindings';
-import CssDisplayContainer from './CssDisplay';
-import DurationContainer from './Duration';
 import EraserContainer from './Eraser';
 import BucketContainer from './Bucket';
 import MoveContainer from './Move';
 import EyedropperContainer from './Eyedropper';
-import FramesHandlerContainer from './FramesHandler';
 import PaletteGridContainer from './PaletteGrid';
-import ResetContainer from './Reset';
 import SaveDrawingContainer from './SaveDrawing';
 import NewProjectContainer from './NewProject';
 import SimpleNotificationContainer from './SimpleNotification';
 import SimpleSpinnerContainer from './SimpleSpinner';
-import CellsInfo from './CellsInfo';
 import UndoRedoContainer from './UndoRedo';
 import initialSetup from '../utils/startup';
 import drawHandlersProvider from '../utils/drawHandlersProvider';
@@ -161,10 +150,7 @@ export default class App extends React.Component {
             </div>
           </div>
           <div className="center col-2-4">
-            <PixelCanvasContainer
-              drawHandlersFactory={this.drawHandlersFactory}
-            />
-            <MyPixelCanvasContainer />
+            <MyPixelCanvasContainer drawHandlersFactory={this.drawHandlersFactory}/>
           </div>
         </div>
         <ModalContainer
