@@ -6,11 +6,11 @@ export const MyPixelCanvasContainer = ({ drawHandlersFactory }) => {
 
   const [grid, setGrid] = useState([]);
   socket.onmessage = function(event) {
-    console.log(event.data.toString());
-    setGrid([]);
+    // console.log(event.data.toString());
+    setGrid(JSON.parse(event.data));
   };
 
-  useEffect(() => console.log('render'));
+  useEffect(() => console.log(grid));
 
   return <h1>123</h1>;
 
