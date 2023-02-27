@@ -100,10 +100,6 @@ function onConnect(ws) {
   ws.on('message', function(message) {
     if (message.length > 1000) {
       main.serverGrid = JSON.parse(message);
-
-      for (let client of main.clients) {
-        client.send(JSON.stringify(main.serverGrid));
-      }
     }
   });
 
@@ -119,6 +115,12 @@ function onConnect(ws) {
 
   ws.send(JSON.stringify(main.serverGrid));
 }
+
+setInterval(() => {
+  for (let client of main.clients) {
+    client.send(JSON.stringify(main.serverGrid));
+  }
+}, 1500);
 
 const app = express();
 module.exports = app;
