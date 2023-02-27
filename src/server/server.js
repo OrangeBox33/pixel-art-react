@@ -23,7 +23,7 @@ const ws = require('ws');
 const main = {
   serverGrid: createEmptyGrid(),
   espGrid: createEmptyGrid(),
-  saved: [],
+  saved: {},
   isOnline: false,
   qtyOnline: 0,
   clients: new Set(),
@@ -98,8 +98,18 @@ function onConnect(ws) {
   main.clients.add(ws);
 
   ws.on('message', function(message) {
-    if (message.length > 1000) {
-      main.serverGrid = JSON.parse(message);
+    const data = JSON.parse(message);
+
+    if (data?.action === 'draw') {
+      main.serverGrid = data.grid;
+    }
+
+    if (data?.action === 'save') {
+      main.saved[Math.random().toString()] = data.grid;
+    }
+
+    if (data?.action === 'delete') {
+      delete main.saved[data.id];
     }
   });
 
@@ -113,14 +123,20 @@ function onConnect(ws) {
     }
   });
 
-  ws.send(JSON.stringify(main.serverGrid));
+  ws.send(JSON.stringify({ action: 'grid', grid: main.serverGrid }));
 }
 
 setInterval(() => {
   for (let client of main.clients) {
-    client.send(JSON.stringify(main.serverGrid));
+    client.send(JSON.stringify({ action: 'grid', grid: main.serverGrid }));
   }
-}, 1500);
+}, 1400);
+
+setInterval(() => {
+  for (let client of main.clients) {
+    client.send(JSON.stringify({ action: 'saved', grids: main.saved }));
+  }
+}, 10000);
 
 const app = express();
 module.exports = app;

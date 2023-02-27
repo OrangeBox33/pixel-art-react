@@ -1,8 +1,8 @@
 import * as types from '../actions/actionTypes';
-// import WebSocket from 'ws';
 
 const isBrowser = typeof window !== 'undefined';
 
+const saved = {};
 export let socket;
 if (isBrowser) {
   try {
@@ -11,6 +11,16 @@ if (isBrowser) {
     console.log(e);
   }
 }
+
+export const saveSaved = grids => {
+  for (let key in saved) {
+    delete saved[key];
+  }
+
+  for (let key in grids) {
+    saved[key] = grids[key];
+  }
+};
 
 export const GRID_INITIAL_COLOR = 'rgba(0, 0, 0, 1)';
 
@@ -81,7 +91,7 @@ const sendGridToServer = newGrid => {
         arrToSend.push([0, 0, 0]);
       }
     }
-    socket.send(JSON.stringify(arrToSend));
+    socket.send(JSON.stringify({ action: 'draw', grid: arrToSend }));
   }
 };
 

@@ -3,7 +3,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import shortid from 'shortid';
 import * as actionCreators from '../store/actions/actionCreators';
+import { socket } from '../store/reducers/activeFrameReducer';
 import { saveProjectToStorage } from '../utils/storage';
+import { gridStrToArr } from '../utils/myUtils';
 
 const SaveDrawing = props => {
   const save = () => {
@@ -16,6 +18,14 @@ const SaveDrawing = props => {
       animate: props.frames.size > 1,
       id: shortid.generate()
     };
+
+    const gridToSend = gridStrToArr(
+      JSON.parse(JSON.stringify(props.frames))[0].grid
+    );
+
+    if (socket) {
+      socket.send(JSON.stringify({ action: 'save', grid: gridToSend }));
+    }
 
     if (saveProjectToStorage(localStorage, drawingToSave)) {
       props.actions.sendNotification('Drawing saved');

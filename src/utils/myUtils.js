@@ -144,7 +144,7 @@ export const createEmptyGrid = () => {
   return arr;
 };
 
-export const createStrGridFromArrGrid = arrGrid => {
+export const gridArrToStr = arrGrid => {
   const strGrid = [];
 
   for (let i = 0; i < 1024; i++) {
@@ -160,11 +160,32 @@ export const createStrGridFromArrGrid = arrGrid => {
 export const createFrames = arrGrid => {
   const frames = [
     {
-      grid: createStrGridFromArrGrid(arrGrid),
+      grid: gridArrToStr(arrGrid),
       interval: 100,
       key: ''
     }
   ];
 
   return frames;
+};
+
+export const gridStrToArr = strGrid => {
+  const gridArr = [];
+
+  for (let i = 0; i < 1024; i++) {
+    const rgbStr = strGrid[i];
+
+    if (rgbStr) {
+      const rgbArr = rgbStr
+        .slice(5)
+        .split(',')
+        .slice(0, -1)
+        .map(el => +el);
+      gridArr.push(rgbArr);
+    } else {
+      gridArr.push([0, 0, 0]);
+    }
+  }
+
+  return gridArr;
 };

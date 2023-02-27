@@ -10,7 +10,7 @@ const NewProject = props => {
     props.actions.newProject();
 
     if (socket) {
-      socket.send(JSON.stringify(createEmptyGrid()));
+      socket.send(JSON.stringify({ action: 'draw', grid: createEmptyGrid() }));
     }
   };
 
