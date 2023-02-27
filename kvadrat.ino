@@ -35,11 +35,15 @@ int jj = 0;
 using namespace websockets;
 
 void onMessageCallback(WebsocketsMessage message) {
+  Serial.println(jj++);
+
   char *str;
   const char* conststr;
   String tmp = message.data();
   conststr = tmp.c_str();
   char *my_str = strdup(conststr);
+  char *variable_to_free = my_str;
+
 
   if (!my_str) {
     return;
@@ -71,10 +75,9 @@ void onMessageCallback(WebsocketsMessage message) {
     leds[i] = CRGB(r,g,b);
   }
 
-  Serial.println("console.log6");
   FastLED.show();
   canNextMessage = 1;
-  free(my_str);
+  free(variable_to_free);
 }
 
 WebsocketsClient client;
@@ -120,5 +123,5 @@ void loop() {
       Serial.println("clientNOT");
     }
 
-    delay(500);
+    delay(250);
 }
