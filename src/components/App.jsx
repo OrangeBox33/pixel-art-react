@@ -71,10 +71,10 @@ export default class App extends React.Component {
             <div className="app__left-side">
               <div className="app__mobile--container max-width-container">
                 <div className="app__mobile--group">
-                  <div data-tooltip={helpOn ? 'New project' : null}>
+                  {/* <div data-tooltip={helpOn ? 'New project' : null}>
                     <NewProjectContainer />
-                  </div>
-                  <div className="app__load-save-container">
+                  </div> */}
+                  {/* <div className="app__load-save-container">
                     <button
                       type="button"
                       className="app__load-button"
@@ -97,7 +97,7 @@ export default class App extends React.Component {
                     ariaLabel="Load image file"
                   >
                     LOAD PHOTO
-                  </Button>
+                  </Button> */}
                   {/* <div
                     data-tooltip={helpOn ? 'Undo (CTRL+Z) Redo (CTRL+Y)' : null}
                   >
