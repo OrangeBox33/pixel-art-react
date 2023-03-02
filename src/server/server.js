@@ -44,7 +44,7 @@ const updateEspGrid = () => {
 
   for (let palette of transformedEspGrid) {
     const paletteStr = palette.reduce(
-      (acc, color) => `${acc}${Math.round(color / 4)},`,
+      (acc, color) => `${acc}${Math.round(color / 20)},`,
       ''
     );
 
@@ -77,20 +77,28 @@ const checkGridDifference = () => {
   }
 };
 
-setInterval(checkGridDifference, 250);
+let start;
+let end;
 
 function onConnectEsp(ws) {
   console.log('подключился esp');
+  start = new Date().getTime();
   main.esp = ws;
   main.isOnline = true;
 
-  ws.on('message', function(message) {});
+  ws.on('message', function(message) {
+    console.log(message.toString());
+  });
 
   ws.on('close', function() {
     console.log('отключился esp');
+    end = new Date().getTime();
+    console.log('в работе ', end - start);
     main.esp = null;
     main.isOnline = false;
   });
+
+  updateEspGrid();
 }
 
 function onConnect(ws) {
@@ -126,17 +134,19 @@ function onConnect(ws) {
   ws.send(JSON.stringify({ action: 'grid', grid: main.serverGrid }));
 }
 
+setInterval(checkGridDifference, 1500);
+
 setInterval(() => {
   for (let client of main.clients) {
     client.send(JSON.stringify({ action: 'grid', grid: main.serverGrid }));
   }
-}, 1400);
+}, 1600);
 
-setInterval(() => {
-  for (let client of main.clients) {
-    client.send(JSON.stringify({ action: 'saved', grids: main.saved }));
-  }
-}, 10000);
+// setInterval(() => {
+//   for (let client of main.clients) {
+//     client.send(JSON.stringify({ action: 'saved', grids: main.saved }));
+//   }
+// }, 10000);
 
 const app = express();
 module.exports = app;

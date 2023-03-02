@@ -4,7 +4,6 @@ import { socket, saveSaved } from '../store/reducers/activeFrameReducer';
 import PixelCanvasContainer from './PixelCanvas';
 import { setDrawing } from '../store/actions/actionCreators';
 import { createFrames, palette } from '../utils/myUtils';
-import { useEffect } from 'react';
 
 export const MyPixelCanvasContainer = ({ drawHandlersFactory }) => {
   const dispatch = useDispatch();
