@@ -1,8 +1,8 @@
 {
-  "name": "pixel-art-react",
+  "name": "kvadrat-nikitosa",
   "version": "3.10.0",
-  "description": "Draw and animate Pixel Art, then export the results to CSS or download them, powered by React",
-  "author": "Javier Valencia Romero",
+  "description": "",
+  "author": "",
   "scripts": {
     "lint": "eslint **/*.{js,jsx}",
     "csslint": "stylelint src/**/*.{css,js,jsx}",
