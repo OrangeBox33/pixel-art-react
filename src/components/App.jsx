@@ -1,16 +1,16 @@
 import React from 'react';
-import ColorPickerContainer from './ColorPicker';
+// import ColorPickerContainer from './ColorPicker';
 import ModalContainer from './Modal';
-import EraserContainer from './Eraser';
-import BucketContainer from './Bucket';
-import MoveContainer from './Move';
-import EyedropperContainer from './Eyedropper';
+// import EraserContainer from './Eraser';
+// import BucketContainer from './Bucket';
+// import MoveContainer from './Move';
+// import EyedropperContainer from './Eyedropper';
 import PaletteGridContainer from './PaletteGrid';
 import SaveDrawingContainer from './SaveDrawing';
 import NewProjectContainer from './NewProject';
 import SimpleNotificationContainer from './SimpleNotification';
 import SimpleSpinnerContainer from './SimpleSpinner';
-import UndoRedoContainer from './UndoRedo';
+// import UndoRedoContainer from './UndoRedo';
 import initialSetup from '../utils/startup';
 import drawHandlersProvider from '../utils/drawHandlersProvider';
 import Button from './common/Button';
@@ -98,12 +98,12 @@ export default class App extends React.Component {
                   >
                     LOAD PHOTO
                   </Button>
-                  <div
+                  {/* <div
                     data-tooltip={helpOn ? 'Undo (CTRL+Z) Redo (CTRL+Y)' : null}
                   >
                     <UndoRedoContainer />
-                  </div>
-                  <div className="app__tools-wrapper grid-3">
+                  </div> */}
+                  {/* <div className="app__tools-wrapper grid-3">
                     <div
                       data-tooltip={
                         helpOn
@@ -141,7 +141,7 @@ export default class App extends React.Component {
                     >
                       <MoveContainer />
                     </div>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="app__mobile--group">
                   <PaletteGridContainer />
@@ -150,7 +150,9 @@ export default class App extends React.Component {
             </div>
           </div>
           <div className="center col-2-4">
-            <MyPixelCanvasContainer drawHandlersFactory={this.drawHandlersFactory}/>
+            <MyPixelCanvasContainer
+              drawHandlersFactory={this.drawHandlersFactory}
+            />
           </div>
         </div>
         <ModalContainer
